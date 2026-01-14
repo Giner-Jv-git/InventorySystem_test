@@ -72,12 +72,61 @@
                 <p style="color: var(--text-secondary); font-size: 14px;">Once deleted, this product cannot be recovered.</p>
             </div>
         </div>
-        <form method="POST" action="{{ route('products.destroy', $product) }}" onsubmit="return confirm('Are you absolutely sure? This action cannot be undone.');" class="mt-4">
-            @csrf
-            <button type="submit" class="btn-danger">
+        <div class="mt-4">
+            <button type="button" class="btn-danger" onclick="openDeleteModal('{{ $product->id }}', 'product', '{{ $product->name }}')">
                 <i class="fas fa-trash mr-2"></i> Delete Product
             </button>
-        </form>
+        </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="card" style="max-width: 400px; width: 90%;">
+        <h3 style="color: var(--coral); font-size: 20px; font-weight: bold; margin-bottom: 12px;">
+            <i class="fas fa-exclamation-triangle mr-2"></i> Confirm Delete
+        </h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;" id="deleteMessage"></p>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button onclick="closeDeleteModal()" class="btn-secondary" style="background: var(--light-gray); color: var(--text-primary); padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Cancel
+            </button>
+            <form id="deleteForm" method="POST" style="display: inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn-danger" style="background: var(--coral); color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openDeleteModal(id, type, name) {
+    const modal = document.getElementById('deleteModal');
+    const message = document.getElementById('deleteMessage');
+    const form = document.getElementById('deleteForm');
+    
+    message.textContent = `Are you sure you want to delete "${name}"? This action cannot be undone.`;
+    
+    if (type === 'product') {
+        form.action = '/products/' + id;
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+</script>
 @endsection
