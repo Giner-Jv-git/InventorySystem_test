@@ -180,6 +180,21 @@
                         <i class="fas fa-box"></i>
                         <span>Products</span>
                     </a>
+                    
+                    <!-- Trash Section -->
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--light-gray);">
+                        <p style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); padding: 0 12px; margin-bottom: 8px;">
+                            <i class="fas fa-trash mr-2"></i>Trash
+                        </p>
+                        <a href="{{ route('categories.trash') }}" class="nav-link {{ request()->routeIs('categories.trash') ? 'active' : '' }}" style="padding-left: 32px; font-size: 14px;">
+                            <i class="fas fa-tag"></i>
+                            <span>Categories Trash</span>
+                        </a>
+                        <a href="{{ route('products.trash') }}" class="nav-link {{ request()->routeIs('products.trash') ? 'active' : '' }}" style="padding-left: 32px; font-size: 14px;">
+                            <i class="fas fa-box"></i>
+                            <span>Products Trash</span>
+                        </a>
+                    </div>
                 </nav>
 
                 <!-- User Section -->

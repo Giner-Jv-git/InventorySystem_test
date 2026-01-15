@@ -69,13 +69,37 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        $category->delete();
+
+        return redirect()->route('categories.index')->with('success', 'Category moved to trash!');
+    }
+
+    public function trash()
+    {
+        $categories = Category::onlyTrashed()->withCount('products')->latest('deleted_at')->get();
+
+        return view('categories.trash', compact('categories'));
+    }
+
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+
+        return redirect()->route('categories.trash')->with('success', 'Category restored successfully!');
+    }
+
+    public function forceDelete($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+
         // Delete photo if exists
         if ($category->photo && Storage::disk('public')->exists($category->photo)) {
             Storage::disk('public')->delete($category->photo);
         }
 
-        $category->delete();
+        $category->forceDelete();
 
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
+        return redirect()->route('categories.trash')->with('success', 'Category permanently deleted!');
     }
 }

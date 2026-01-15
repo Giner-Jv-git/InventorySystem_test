@@ -66,14 +66,14 @@
         <div class="flex items-start justify-between">
             <div>
                 <h2 class="text-lg font-bold mb-2" style="color: #D67A5F;">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Danger Zone
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Delete Zone
                 </h2>
-                <p style="color: var(--text-secondary); font-size: 14px;">Once deleted, this category cannot be recovered.</p>
+                <p style="color: var(--text-secondary); font-size: 14px;">Delete this category. You can restore it from trash later.</p>
             </div>
         </div>
         <div class="mt-4">
             <button type="button" class="btn-danger" onclick="openDeleteModal('{{ $category->id }}', 'category', '{{ $category->name }}')">
-                <i class="fas fa-trash mr-2"></i> Delete Category
+                <i class="fas fa-trash mr-2"></i> Move to Trash
             </button>
         </div>
     </div>

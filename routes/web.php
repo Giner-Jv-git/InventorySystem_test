@@ -40,6 +40,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('{product}/delete', [ProductController::class, 'destroy'])->name('destroy');
         Route::put('/{product}', [ProductController::class, 'update'])->name('update.rest');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy.rest');
+        // Trash management routes
+        Route::get('/trash/list', [ProductController::class, 'trash'])->name('trash');
+        Route::put('{id}/restore', [ProductController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force', [ProductController::class, 'forceDelete'])->name('force-delete');
     });
     
     // Category Management
@@ -51,5 +55,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('{category}/delete', [CategoryController::class, 'destroy'])->name('destroy');
         Route::put('/{category}', [CategoryController::class, 'update'])->name('update.rest');
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy.rest');
+        // Trash management routes
+        Route::get('/trash/list', [CategoryController::class, 'trash'])->name('trash');
+        Route::put('{id}/restore', [CategoryController::class, 'restore'])->name('restore');
+        Route::delete('{id}/force', [CategoryController::class, 'forceDelete'])->name('force-delete');
     });
 });
