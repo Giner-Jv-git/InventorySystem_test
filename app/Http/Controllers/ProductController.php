@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
@@ -129,5 +130,23 @@ class ProductController extends Controller
         $product->forceDelete();
 
         return redirect()->route('products.trash')->with('success', 'Product permanently deleted!');
+    }
+
+    public function exportPdf()
+    {
+        $products = Product::with('category')->latest()->get();
+        $total_value = $products->sum(function ($product) {
+            return $product->price * $product->stock;
+        });
+        $low_stock_count = $products->where('stock', '<', 5)->count();
+
+        $pdf = Pdf::loadView('pdfs.products', compact('products', 'total_value', 'low_stock_count'))
+            ->setPaper('a4', 'landscape')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+        $filename = 'products_' . now()->format('Y-m-d_H-i-s') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }

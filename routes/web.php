@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/trash/list', [ProductController::class, 'trash'])->name('trash');
         Route::put('{id}/restore', [ProductController::class, 'restore'])->name('restore');
         Route::delete('{id}/force', [ProductController::class, 'forceDelete'])->name('force-delete');
+        // PDF export route
+        Route::get('/export/pdf', [ProductController::class, 'exportPdf'])->name('export.pdf');
     });
     
     // Category Management
@@ -59,5 +61,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/trash/list', [CategoryController::class, 'trash'])->name('trash');
         Route::put('{id}/restore', [CategoryController::class, 'restore'])->name('restore');
         Route::delete('{id}/force', [CategoryController::class, 'forceDelete'])->name('force-delete');
+        // PDF export route
+        Route::get('/export/pdf', [CategoryController::class, 'exportPdf'])->name('export.pdf');
     });
 });

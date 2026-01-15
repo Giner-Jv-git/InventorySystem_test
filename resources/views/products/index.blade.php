@@ -55,9 +55,14 @@
 
     <!-- Products Table -->
     <div class="card">
-        <h3 class="text-2xl font-bold mb-6" style="color: var(--text-primary);">
-            <i class="fas fa-list mr-2" style="color: var(--teal);"></i> All Products
-        </h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3 class="text-2xl font-bold" style="color: var(--text-primary);">
+                <i class="fas fa-list mr-2" style="color: var(--teal);"></i> All Products
+            </h3>
+            <a href="{{ route('products.export.pdf') }}" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; font-size: 14px;">
+                <i class="fas fa-file-pdf"></i> Export to PDF
+            </a>
+        </div>
         
         @if($products->count() > 0)
         <div class="overflow-x-auto">

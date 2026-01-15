@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Helpers\AvatarHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CategoryController extends Controller
 {
@@ -101,5 +102,20 @@ class CategoryController extends Controller
         $category->forceDelete();
 
         return redirect()->route('categories.trash')->with('success', 'Category permanently deleted!');
+    }
+
+    public function exportPdf()
+    {
+        $categories = Category::withCount('products')->latest()->get();
+        $total_products = $categories->sum('products_count');
+
+        $pdf = Pdf::loadView('pdfs.categories', compact('categories', 'total_products'))
+            ->setPaper('a4')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isPhpEnabled', true);
+
+        $filename = 'categories_' . now()->format('Y-m-d_H-i-s') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }
