@@ -16,7 +16,7 @@
         <h2 class="text-2xl font-bold mb-6" style="color: var(--text-primary);">
             <i class="fas fa-plus-circle mr-2" style="color: var(--coral);"></i> Add New Category
         </h2>
-        <form method="POST" action="{{ route('categories.store') }}">
+        <form method="POST" action="{{ route('categories.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -29,6 +29,13 @@
                 <div>
                     <label>Description</label>
                     <input type="text" name="description" value="{{ old('description') }}" placeholder="Brief description...">
+                </div>
+                <div class="md:col-span-2">
+                    <label>Photo <span style="color: var(--text-secondary); font-size: 12px;">(JPG/PNG, max 2MB)</span></label>
+                    <input type="file" name="photo" id="photoInputNew" accept="image/jpeg,image/png" style="padding: 10px; border: 2px solid var(--light-gray); border-radius: 6px; width: 100%; cursor: pointer;">
+                    @error('photo')
+                    <p style="color: var(--text-secondary); font-size: 12px; margin-top: 6px;"><i class="fas fa-info-circle mr-1"></i> {{ $message }}</p>
+                    @enderror
                 </div>
             </div>
             <div class="mt-6">
@@ -50,6 +57,7 @@
             <table class="w-full">
                 <thead>
                     <tr style="border-bottom: 2px solid var(--light-gray);">
+                        <th class="text-left px-6 py-4" style="color: var(--text-secondary); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Photo</th>
                         <th class="text-left px-6 py-4" style="color: var(--text-secondary); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">ID</th>
                         <th class="text-left px-6 py-4" style="color: var(--text-secondary); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Name</th>
                         <th class="text-left px-6 py-4" style="color: var(--text-secondary); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Description</th>
@@ -60,6 +68,17 @@
                 <tbody>
                     @foreach($categories as $category)
                     <tr style="border-bottom: 1px solid var(--light-gray); transition: background 0.2s ease;" onmouseover="this.style.background='rgba(232, 153, 122, 0.05)'" onmouseout="this.style.background='transparent'">
+                        <td class="px-6 py-4">
+                            <div style="width: 40px; height: 40px; border-radius: 6px; overflow: hidden; background: var(--light-gray); display: flex; align-items: center; justify-content: center;">
+                                @if($category->photo)
+                                    <img src="{{ asset('storage/' . $category->photo) }}" alt="{{ $category->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #E89B7A, #7CB9C8); color: white; font-weight: bold; font-size: 14px;">
+                                        {{ \App\Helpers\AvatarHelper::getInitials($category->name) }}
+                                    </div>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-6 py-4 text-sm" style="color: var(--text-secondary);">#{{ $category->id }}</td>
                         <td class="px-6 py-4 text-sm font-bold" style="color: var(--text-primary);">🏷️ {{ $category->name }}</td>
                         <td class="px-6 py-4 text-sm" style="color: var(--text-secondary);">{{ $category->description ?? '—' }}</td>

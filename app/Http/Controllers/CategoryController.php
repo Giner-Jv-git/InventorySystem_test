@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Helpers\AvatarHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -19,7 +21,16 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png|max:2048',
         ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = 'category_' . time() . '.' . $file->getClientOriginalExtension();
+            $photoPath = $file->storeAs('photos/categories', $filename, 'public');
+            $validated['photo'] = $photoPath;
+        }
 
         Category::create($validated);
 
@@ -36,7 +47,20 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($category->photo && Storage::disk('public')->exists($category->photo)) {
+                Storage::disk('public')->delete($category->photo);
+            }
+
+            $file = $request->file('photo');
+            $filename = 'category_' . time() . '.' . $file->getClientOriginalExtension();
+            $photoPath = $file->storeAs('photos/categories', $filename, 'public');
+            $validated['photo'] = $photoPath;
+        }
 
         $category->update($validated);
 
@@ -45,6 +69,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        // Delete photo if exists
+        if ($category->photo && Storage::disk('public')->exists($category->photo)) {
+            Storage::disk('public')->delete($category->photo);
+        }
+
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');

@@ -15,7 +15,7 @@
 
     <!-- Edit Form -->
     <div class="card mb-8">
-        <form method="POST" action="{{ route('products.update', $product) }}">
+        <form method="POST" action="{{ route('products.update', $product) }}" enctype="multipart/form-data">
             @csrf
             <div class="space-y-6">
                 <div>
@@ -49,6 +49,26 @@
                             <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                         @endforeach
                     </select>
+                </div>
+                <div>
+                    <label>Photo <span style="color: var(--text-secondary); font-size: 12px;">(JPG/PNG, max 2MB)</span></label>
+                    <div style="display: flex; gap: 16px; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <input type="file" name="photo" id="photoInput" accept="image/jpeg,image/png" style="padding: 10px; border: 2px solid var(--light-gray); border-radius: 6px; width: 100%; cursor: pointer;">
+                            @error('photo')
+                            <p style="color: var(--text-secondary); font-size: 12px; margin-top: 6px;"><i class="fas fa-info-circle mr-1"></i> {{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: var(--light-gray); display: flex; align-items: center; justify-content: center;">
+                            @if($product->photo)
+                                <img id="photoPreview" src="{{ asset('storage/' . $product->photo) }}" alt="Photo preview" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <div id="photoPreview" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #E89B7A, #7CB9C8); color: white; font-weight: bold; font-size: 20px;">
+                                    {{ \App\Helpers\AvatarHelper::getInitials($product->name) }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="mt-8 flex gap-3">
@@ -103,6 +123,18 @@
 </div>
 
 <script>
+document.getElementById('photoInput')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = `<img src="${event.target.result}" alt="Photo preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 function openDeleteModal(id, type, name) {
     const modal = document.getElementById('deleteModal');
     const message = document.getElementById('deleteMessage');
